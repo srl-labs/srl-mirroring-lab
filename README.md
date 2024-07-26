@@ -26,18 +26,17 @@ This lab can be used to explore the Nokia SR Linux mirroring capabilities. It in
 
 ## Deploying the lab
 
-The lab is deployed with the [containerlab](https://containerlab.dev) project, where [`srl-mirroring.clab.yml`](srl-mirroring.clab.yml) file declaratively describes the lab topology.
+The lab is deployed with the [containerlab](https://containerlab.dev) project, where [`srl-mirroring.clab.yml`](mirroring.clab.yml) file declaratively describes the lab topology.
 
 ```bash
-# change into the cloned directory
-# and execute
-clab deploy --reconfigure
+# change into the cloned directory and execute
+sudo clab dep -c
 ```
 
 To remove the lab:
 
 ```bash
-clab destroy --cleanup
+sudo clab des -c
 ```
 
 ## Accessing the network elements
@@ -54,6 +53,7 @@ docker exec -it client1 bash
 ```
 
 ## Mirroring config
+
 ### Local mirror destination
 
 On leaf1, we are making use of the local mirroring functionality of an entire interface. (It would also be possible to only mirror the traffic on sub-interface level, i.e. interface + VLAN combination.)
@@ -113,7 +113,9 @@ set / system mirroring mirroring-instance 1 mirror-destination remote tunnel-end
 ```
 
 ## Verification
+
 ### Ping on Client1
+
 ```
 client1# ping 172.17.0.2
 PING 172.17.0.2 (172.17.0.2) 56(84) bytes of data.
@@ -123,6 +125,7 @@ PING 172.17.0.2 (172.17.0.2) 56(84) bytes of data.
 ```
 
 ### Mirror1
+
 ```
 mirror1# tcpdump -nni eth1
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
@@ -133,6 +136,7 @@ listening on eth1, link-type EN10MB (Ethernet), capture size 262144 bytes
 ```
 
 ### Mirror2
+
 ```
 mirror2# tcpdump -nni eth1
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
@@ -147,8 +151,11 @@ listening on eth1, link-type EN10MB (Ethernet), capture size 262144 bytes
 ```
 
 ## Statistics
+
 Statistics about the mirrored traffic can be seen with the following commands.
+
 ## Leaf1
+
 ```
 A:leaf1# info from state interface ethernet-1/10 statistics | filter fields out-mirror-octets out-mirror-packets | as table
 +---------------------+----------------------+----------------------+
@@ -159,7 +166,9 @@ A:leaf1# info from state interface ethernet-1/10 statistics | filter fields out-
 ```
 
 ## Leaf2
+
 In this case the statistics can be seen on `ethernet-1/50` since this is the interface leaf2 uses to send traffic to mirror1.
+
 ```
 A:leaf2# info from state interface ethernet-1/50 statistics | filter fields out-mirror-octets out-mirror-packets | as table
 +---------------------+----------------------+----------------------+
