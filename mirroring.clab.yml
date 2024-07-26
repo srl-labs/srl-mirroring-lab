@@ -1,66 +1,46 @@
-name: srl-mirroring
-prefix: ""
-
-mgmt:
-  network: srl-mgmt
-  ipv4-subnet: 172.16.0.0/24
+name: mirroring
+prefix: ${LAB_PREFIX:-""}
 
 topology:
-  defaults:
-    labels:
-      owner: $SUDO_USER
-    kind: nokia_srlinux
-
   kinds:
     nokia_srlinux:
-      image: ghcr.io/nokia/srlinux:24.3.3
+      image: ghcr.io/nokia/srlinux:24.7.1
       type: ixrd2l
     linux:
-      image: ghcr.io/hellt/network-multitool
+      image: ghcr.io/srl-labs/network-multitool
 
   nodes:
     ### SPINES ###
     spine1:
+      kind: nokia_srlinux
       type: ixrd3l
       group: spine
       startup-config: configs/spine1.cfg
-      mgmt-ipv4: 172.16.0.10
 
     ### LEAFS ###
     leaf1:
+      kind: nokia_srlinux
       startup-config: configs/leaf1.cfg
-      mgmt-ipv4: 172.16.0.11
     leaf2:
+      kind: nokia_srlinux
       startup-config: configs/leaf2.cfg
-      mgmt-ipv4: 172.16.0.12
 
     ### CLIENTS ###
     client1:
       kind: linux
-      mgmt-ipv4: 172.16.0.21
-      binds:
-        - configs/bashrc:/root/.bashrc
       exec:
         - ip address add 172.17.0.1/24 dev eth1
     client2:
       kind: linux
-      mgmt-ipv4: 172.16.0.22
-      binds:
-        - configs/bashrc:/root/.bashrc
       exec:
         - ip address add 172.17.0.2/24 dev eth1
+    ### MIRROR DESTINATIONS ###
     mirror1:
       kind: linux
-      mgmt-ipv4: 172.16.0.31
-      binds:
-        - configs/bashrc:/root/.bashrc
       exec:
         - ip address add 192.168.1.10/24 dev eth1
     mirror2:
       kind: linux
-      mgmt-ipv4: 172.16.0.32
-      binds:
-        - configs/bashrc:/root/.bashrc
 
   links:
     - endpoints: ["spine1:e1-1", "leaf1:e1-50"]
