@@ -18,7 +18,10 @@ This lab can be used to explore the Nokia SR Linux mirroring capabilities. It in
 ## Topology
 
 <div align="center" markdown>
-<img src=https://github.com/user-attachments/assets/e54b2b85-da8e-46c7-8614-6eb04947b532 style="width:60%" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/d4372fa0-a22e-4b2c-8043-734acaa66ba1">
+  <img src="https://github.com/user-attachments/assets/6cfd2ef3-ebc9-4a0d-921e-646953bec74f" style="width:60%" />
+</picture>
 </div>
 
 ## Deploying the lab
