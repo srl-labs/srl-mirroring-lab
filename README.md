@@ -1,15 +1,24 @@
-# SRL Local and Remote Mirroring
+# Nokia SR Linux Local and Remote Mirroring
+
+This lab can be used to explore the Nokia SR Linux mirroring capabilities. It includes different mirror sources (interface, ACL) as well as different mirror destination types (local, remote). The lab can be deployed and used as is, however, the crucial configuration snippets to get the mirroring up and running are listed below.
+
+---
+
 <div align="center" markdown>
-<img src=https://github.com/user-attachments/assets/e54b2b85-da8e-46c7-8614-6eb04947b532 style="width:50%" />
-
-<br><br>
-
 <a href="https://codespaces.new/toweber/srl-mirroring?quickstart=1">
 <img src="https://gitlab.com/rdodin/pics/-/wikis/uploads/d78a6f9f6869b3ac3c286928dd52fa08/run_in_codespaces-v1.svg?sanitize=true" style="width:50%"/></a>
 
 **[Run](https://codespaces.new/toweber/srl-mirroring?quickstart=1) this lab in GitHub Codespaces for free**.  
 [Learn more](https://containerlab.dev/manual/codespaces) about Containerlab for Codespaces.  
 <small>Machine type: 2 vCPU · 8 GB RAM</small>
+</div>
+
+---
+
+## Topology
+
+<div align="center" markdown>
+<img src=https://github.com/user-attachments/assets/e54b2b85-da8e-46c7-8614-6eb04947b532 style="width:60%" />
 </div>
 
 ## Accessing the network elements
@@ -26,7 +35,11 @@ docker exec -it client1 bash
 ```
 
 ## Mirroring config
-### Local mirror destination on Leaf1
+### Local mirror destination
+
+On leaf1, we are making use of the local mirroring functionality of an entire interface. (It would also be possible to only mirror the traffic on sub-interface level, i.e. interface + VLAN combination.)
+For this purpose, `ethernet-1/10` is configured as `local-mirror-dest` and a `mirroring-instance` is created containing `ethernet-1/1` as source and `ethernet-1/10` as local destination. The traffic will be sent to mirror2.
+
 ```
 set / interface ethernet-1/10
 set / interface ethernet-1/10 admin-state enable
@@ -47,10 +60,14 @@ set / system mirroring mirroring-instance 1 mirror-destination local ethernet-1/
 ```
 
 ### Remote mirror destination on Leaf2
+
+On leaf2, the mirror destination is not locally connected but on a remote machine. In this scenario, the mirror source is based on an ACL entry. In the configuration below, the first step is to create an IPv4 ACL that matches ICMP packets (protocol 1) and assign it to the client interface `ethernet-1/1.0`. Secondly, the `mirroring-instance` is created using the ACL entry 10 as a source and specifying the remote mirror destination. The encapsulation type is `l2ogre` (L2 over GRE). The remote destination of the mirrored traffic is mirror1.
+
 ```
 set / acl acl-filter mirror-acl type ipv4
 set / acl acl-filter mirror-acl type ipv4 entry 10
 set / acl acl-filter mirror-acl type ipv4 entry 10 description "Match ICMP"
+set / acl acl-filter mirror-acl type ipv4 entry 10 match ipv4 protocol 1
 set / acl acl-filter mirror-acl type ipv4 entry 10 action
 set / acl acl-filter mirror-acl type ipv4 entry 10 action accept
 set / acl interface ethternet-1/1.0
@@ -59,6 +76,7 @@ set / acl interface ethternet-1/1.0 interface-ref interface ethernet-1/1
 set / acl interface ethternet-1/1.0 interface-ref subinterface 0
 set / acl interface ethternet-1/1.0 input
 set / acl interface ethternet-1/1.0 input acl-filter mirror-acl type ipv4
+
 set / system mirroring
 set / system mirroring mirroring-instance 1
 set / system mirroring mirroring-instance 1 admin-state enable
@@ -107,4 +125,27 @@ listening on eth1, link-type EN10MB (Ethernet), capture size 262144 bytes
 06:39:46.668389 IP 172.17.0.1 > 172.17.0.2: ICMP echo request, id 34, seq 3, length 64
 06:39:46.669156 IP 172.17.0.2 > 172.17.0.1: ICMP echo reply, id 34, seq 3, length 64
 
+```
+
+## Statistics
+Statistics about the mirrored traffic can be seen with the following commands.
+## Leaf1
+```
+A:leaf1# info from state interface ethernet-1/10 statistics | filter fields out-mirror-octets out-mirror-packets | as table
++---------------------+----------------------+----------------------+
+|      Interface      |  Out-mirror-octets   |  Out-mirror-packets  |
++=====================+======================+======================+
+| ethernet-1/10       |                43348 |                  269 |
++---------------------+----------------------+----------------------+
+```
+
+## Leaf2
+In this case the statistics can be seen on `ethernet-1/50` since this is the interface leaf2 uses to send traffic to mirror1.
+```
+A:leaf2# info from state interface ethernet-1/50 statistics | filter fields out-mirror-octets out-mirror-packets | as table
++---------------------+----------------------+----------------------+
+|      Interface      |  Out-mirror-octets   |  Out-mirror-packets  |
++=====================+======================+======================+
+| ethernet-1/50       |                  772 |                    6 |
++---------------------+----------------------+----------------------+
 ```
