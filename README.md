@@ -21,6 +21,22 @@ This lab can be used to explore the Nokia SR Linux mirroring capabilities. It in
 <img src=https://github.com/user-attachments/assets/e54b2b85-da8e-46c7-8614-6eb04947b532 style="width:60%" />
 </div>
 
+## Deploying the lab
+
+The lab is deployed with the [containerlab](https://containerlab.dev) project, where [`srl-mirroring.clab.yml`](srl-mirroring.clab.yml) file declaratively describes the lab topology.
+
+```bash
+# change into the cloned directory
+# and execute
+clab deploy --reconfigure
+```
+
+To remove the lab:
+
+```bash
+clab destroy --cleanup
+```
+
 ## Accessing the network elements
 
 Once the lab has been deployed, the different SR Linux nodes can be accessed via SSH through their management IP address, given in the summary displayed after the execution of the deploy command. It is also possible to reach those nodes directly via their hostname, defined in the topology file. Linux clients cannot be reached via SSH, as it is not enabled, but it is possible to connect to them with a docker exec command.
