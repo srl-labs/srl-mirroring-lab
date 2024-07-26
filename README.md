@@ -1,6 +1,6 @@
 # SRL Local and Remote Mirroring
 <div align="center" markdown>
-<img src=https://github.com/user-attachments/assets/4bb2d9e8-56f1-400e-92ab-dcd873eaf45c style="width:50%" />
+<img src=https://github.com/user-attachments/assets/e54b2b85-da8e-46c7-8614-6eb04947b532 style="width:50%" />
 
 <br>
 <br>
