@@ -75,7 +75,7 @@ set / system mirroring mirroring-instance 1 mirror-destination
 set / system mirroring mirroring-instance 1 mirror-destination local ethernet-1/10.0
 ```
 
-### Remote mirror destination on Leaf2
+### Remote mirror destination
 
 On leaf2, the mirror destination is not locally connected but on a remote machine. In this scenario, the mirror source is based on an ACL entry. In the configuration below, the first step is to create an IPv4 ACL that matches ICMP packets (protocol 1) and assign it to the client interface `ethernet-1/1.0`. Secondly, the `mirroring-instance` is created using the ACL entry 10 as a source and specifying the remote mirror destination. The encapsulation type is `l2ogre` (L2 over GRE). The remote destination of the mirrored traffic is mirror1.
 
