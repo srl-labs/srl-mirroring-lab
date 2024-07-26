@@ -1,9 +1,6 @@
 name: mirroring
 prefix: ${LAB_PREFIX:-""}
 
-mgmt:
-  network: srl-mgmt
-
 topology:
   kinds:
     nokia_srlinux:
