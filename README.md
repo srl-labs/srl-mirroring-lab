@@ -41,15 +41,16 @@ sudo clab des -c
 
 ## Accessing the network elements
 
-Once the lab has been deployed, the different SR Linux nodes can be accessed via SSH through their management IP address, given in the summary displayed after the execution of the deploy command. It is also possible to reach those nodes directly via their hostname, defined in the topology file. Linux clients cannot be reached via SSH, as it is not enabled, but it is possible to connect to them with a docker exec command.
+Once the lab has been deployed, the SR Linux nodes can be accessed via SSH using their names.
 
 ```bash
-# reach a SR Linux leaf or a spine via SSH
-ssh admin@leaf1
-ssh admin@spine1
+ssh leaf1
+```
 
-# reach a Linux client via Docker
-docker exec -it client1 bash
+Linux-based clients and mirror destination nodes can also be accessed via SSH. The username is `user` and password is `multit00l`:
+
+```bash
+ssh user@client1
 ```
 
 ## Mirroring config
