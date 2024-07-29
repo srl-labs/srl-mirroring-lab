@@ -26,7 +26,7 @@ This lab can be used to explore the Nokia SR Linux mirroring capabilities. It in
 
 ## Deploying the lab
 
-The lab is deployed with the [containerlab](https://containerlab.dev) project, where [`srl-mirroring.clab.yml`](mirroring.clab.yml) file declaratively describes the lab topology.
+The lab is deployed with the [containerlab](https://containerlab.dev) project, where [`mirroring.clab.yml`](mirroring.clab.yml) file declaratively describes the lab topology.
 
 ```bash
 # change into the cloned directory and execute
@@ -57,8 +57,8 @@ ssh user@client1
 
 ### Local mirror destination
 
-On leaf1, we are making use of the local mirroring functionality of an entire interface. (It would also be possible to only mirror the traffic on sub-interface level, i.e. interface + VLAN combination.)
-For this purpose, `ethernet-1/10` is configured as `local-mirror-dest` and a `mirroring-instance` is created containing `ethernet-1/1` as source and `ethernet-1/10` as local destination. The traffic will be sent to mirror2.
+On `leaf1`, we are making use of the local mirroring functionality of an entire interface. (It would also be possible to only mirror the traffic on sub-interface level, i.e. interface + VLAN combination.)
+For this purpose, `ethernet-1/10` is configured as `local-mirror-dest` and a `mirroring-instance` is created containing `ethernet-1/1` as source and `ethernet-1/10` as local destination. The traffic will be sent to `mirror2`.
 
 ```
 set / interface ethernet-1/10
@@ -81,7 +81,7 @@ set / system mirroring mirroring-instance 1 mirror-destination local ethernet-1/
 
 ### Remote mirror destination
 
-On leaf2, the mirror destination is not locally connected but on a remote machine. In this scenario, the mirror source is based on an ACL entry. In the configuration below, the first step is to create an IPv4 ACL that matches ICMP packets (protocol 1) and assign it to the client interface `ethernet-1/1.0`. Secondly, the `mirroring-instance` is created using the ACL entry 10 as a source and specifying the remote mirror destination. The encapsulation type is `l2ogre` (L2 over GRE). The remote destination of the mirrored traffic is mirror1.
+On `leaf2`, the mirror destination is not locally connected but on a remote machine. In this scenario, the mirror source is based on an ACL entry. In the configuration below, the first step is to create an IPv4 ACL that matches ICMP packets (protocol 1) and assign it to the client interface `ethernet-1/1.0`. Secondly, the `mirroring-instance` is created using the ACL entry 10 as a source and specifying the remote mirror destination. The encapsulation type is `l2ogre` (L2 over GRE). The remote destination of the mirrored traffic is `mirror1`.
 
 ```
 set / acl acl-filter mirror-acl type ipv4
