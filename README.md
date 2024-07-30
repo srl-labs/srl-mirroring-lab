@@ -128,7 +128,7 @@ PING 172.17.0.2 (172.17.0.2) 56(84) bytes of data.
 ### Mirror1
 
 ```
-mirror1# tcpdump -nni eth1
+mirror1# sudo tcpdump -nni eth1
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on eth1, link-type EN10MB (Ethernet), capture size 262144 bytes
 06:39:44.621663 IP 10.0.1.2 > 192.168.1.10: GREv0, length 102: IP 172.17.0.2 > 172.17.0.1: ICMP echo reply, id 34, seq 1, length 64
@@ -139,7 +139,7 @@ listening on eth1, link-type EN10MB (Ethernet), capture size 262144 bytes
 ### Mirror2
 
 ```
-mirror2# tcpdump -nni eth1
+mirror2# sudo tcpdump -nni eth1
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on eth1, link-type EN10MB (Ethernet), capture size 262144 bytes
 06:39:44.621314 IP 172.17.0.1 > 172.17.0.2: ICMP echo request, id 34, seq 1, length 64
