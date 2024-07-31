@@ -61,22 +61,31 @@ On `leaf1`, we are making use of the local mirroring functionality of an entire 
 For this purpose, `ethernet-1/10` is configured as `local-mirror-dest` and a `mirroring-instance` is created containing `ethernet-1/1` as source and `ethernet-1/10` as local destination. The traffic will be sent to `mirror2`.
 
 ```
-set / interface ethernet-1/10
-set / interface ethernet-1/10 admin-state enable
-set / interface ethernet-1/10 subinterface 0
-set / interface ethernet-1/10 subinterface 0 admin-state enable
-set / interface ethernet-1/10 subinterface 0 type local-mirror-dest
-set / interface ethernet-1/10 subinterface 0 local-mirror-destination
-set / interface ethernet-1/10 subinterface 0 local-mirror-destination admin-state enable
+/ interface ethernet-1/10 {
+    subinterface 0 {
+        type local-mirror-dest
+        admin-state enable
+        local-mirror-destination {
+            admin-state enable
+        }
+    }
+}
 
-set / system mirroring
-set / system mirroring mirroring-instance 1
-set / system mirroring mirroring-instance 1 admin-state enable
-set / system mirroring mirroring-instance 1 mirror-source
-set / system mirroring mirroring-instance 1 mirror-source interface ethernet-1/1
-set / system mirroring mirroring-instance 1 mirror-source interface ethernet-1/1 direction ingress-egress
-set / system mirroring mirroring-instance 1 mirror-destination
-set / system mirroring mirroring-instance 1 mirror-destination local ethernet-1/10.0
+/ system {
+    mirroring {
+        mirroring-instance 1 {
+            admin-state enable
+            mirror-source {
+                interface ethernet-1/1 {
+                    direction ingress-egress
+                }
+            }
+            mirror-destination {
+                local ethernet-1/10.0
+            }
+        }
+    }
+}
 ```
 
 ### Remote mirror destination
@@ -84,33 +93,58 @@ set / system mirroring mirroring-instance 1 mirror-destination local ethernet-1/
 On `leaf2`, the mirror destination is not locally connected but on a remote machine. In this scenario, the mirror source is based on an ACL entry. In the configuration below, the first step is to create an IPv4 ACL that matches ICMP packets (protocol 1) and assign it to the client interface `ethernet-1/1.0`. Secondly, the `mirroring-instance` is created using the ACL entry 10 as a source and specifying the remote mirror destination. The encapsulation type is `l2ogre` (L2 over GRE). The remote destination of the mirrored traffic is `mirror1`.
 
 ```
-set / acl acl-filter mirror-acl type ipv4
-set / acl acl-filter mirror-acl type ipv4 entry 10
-set / acl acl-filter mirror-acl type ipv4 entry 10 description "Match ICMP"
-set / acl acl-filter mirror-acl type ipv4 entry 10 match ipv4 protocol 1
-set / acl acl-filter mirror-acl type ipv4 entry 10 action
-set / acl acl-filter mirror-acl type ipv4 entry 10 action accept
-set / acl interface ethternet-1/1.0
-set / acl interface ethternet-1/1.0 interface-ref
-set / acl interface ethternet-1/1.0 interface-ref interface ethernet-1/1
-set / acl interface ethternet-1/1.0 interface-ref subinterface 0
-set / acl interface ethternet-1/1.0 input
-set / acl interface ethternet-1/1.0 input acl-filter mirror-acl type ipv4
+/ acl {
+    acl-filter mirror-acl type ipv4 {
+        entry 10 {
+            description "Match ICMP"
+            match {
+                ipv4 {
+                    protocol 1
+                }
+            }
+            action {
+                accept {
+                }
+            }
+        }
+    }
+    interface ethternet-1/1.0 {
+        interface-ref {
+            interface ethernet-1/1
+            subinterface 0
+        }
+        input {
+            acl-filter mirror-acl type ipv4 {
+            }
+        }
+    }
+}
 
-set / system mirroring
-set / system mirroring mirroring-instance 1
-set / system mirroring mirroring-instance 1 admin-state enable
-set / system mirroring mirroring-instance 1 mirror-source
-set / system mirroring mirroring-instance 1 mirror-source acl
-set / system mirroring mirroring-instance 1 mirror-source acl acl-filter mirror-acl type ipv4
-set / system mirroring mirroring-instance 1 mirror-source acl acl-filter mirror-acl type ipv4 entry 10
-set / system mirroring mirroring-instance 1 mirror-destination
-set / system mirroring mirroring-instance 1 mirror-destination remote
-set / system mirroring mirroring-instance 1 mirror-destination remote encap l2ogre
-set / system mirroring mirroring-instance 1 mirror-destination remote network-instance default
-set / system mirroring mirroring-instance 1 mirror-destination remote tunnel-end-points
-set / system mirroring mirroring-instance 1 mirror-destination remote tunnel-end-points source-address 10.0.1.2
-set / system mirroring mirroring-instance 1 mirror-destination remote tunnel-end-points destination-address 192.168.1.10
+/ system {
+    mirroring {
+        mirroring-instance 1 {
+            admin-state enable
+            mirror-source {
+                acl {
+                    acl-filter mirror-acl type ipv4 {
+                        entry 10 {
+                        }
+                    }
+                }
+            }
+            mirror-destination {
+                remote {
+                    encap l2ogre
+                    network-instance default
+                    tunnel-end-points {
+                        source-address 10.0.1.2
+                        destination-address 192.168.1.10
+                    }
+                }
+            }
+        }
+    }
+}
 ```
 
 ## Verification

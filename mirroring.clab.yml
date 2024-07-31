@@ -5,7 +5,6 @@ topology:
   kinds:
     nokia_srlinux:
       image: ghcr.io/nokia/srlinux:24.7.1
-      type: ixrd2l
     linux:
       image: ghcr.io/srl-labs/network-multitool
 
@@ -14,15 +13,16 @@ topology:
     spine1:
       kind: nokia_srlinux
       type: ixrd3l
-      group: spine
       startup-config: configs/spine1.cfg
 
     ### LEAFS ###
     leaf1:
       kind: nokia_srlinux
+      type: ixrd2l
       startup-config: configs/leaf1.cfg
     leaf2:
       kind: nokia_srlinux
+      type: ixrd2l
       startup-config: configs/leaf2.cfg
 
     ### CLIENTS ###
@@ -34,6 +34,7 @@ topology:
       kind: linux
       exec:
         - ip address add 172.17.0.2/24 dev eth1
+
     ### MIRROR DESTINATIONS ###
     mirror1:
       kind: linux
