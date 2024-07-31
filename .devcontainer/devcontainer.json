@@ -4,5 +4,13 @@
         "cpus": 2,
         "memory": "8gb",
         "storage": "32gb"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "hediet.vscode-drawio",
+                "sankooc.pcapviewer"
+            ]
+        }
     }
 }
