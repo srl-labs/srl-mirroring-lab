@@ -40,15 +40,15 @@ topology:
     ### MIRROR DESTINATIONS ###
     mirror1:
       kind: linux
-      exec:
-        - ip address add 192.168.1.10/24 dev eth1
     mirror2:
       kind: linux
+      exec:
+        - ip address add 192.168.1.10/24 dev eth1
 
   links:
     - endpoints: ["spine1:e1-1", "leaf1:e1-50"]
     - endpoints: ["spine1:e1-2", "leaf2:e1-50"]
-    - endpoints: ["spine1:e1-10", "mirror1:eth1"]
+    - endpoints: ["spine1:e1-10", "mirror2:eth1"]
     - endpoints: ["leaf1:e1-1", "client1:eth1"]
     - endpoints: ["leaf2:e1-1", "client2:eth1"]
-    - endpoints: ["leaf1:e1-10", "mirror2:eth1"]
+    - endpoints: ["leaf1:e1-10", "mirror1:eth1"]
