@@ -4,7 +4,7 @@ prefix: ${LAB_PREFIX:-""}
 topology:
   kinds:
     nokia_srlinux:
-      image: ghcr.io/nokia/srlinux:24.7.1
+      image: ghcr.io/nokia/srlinux:25.10.3
     linux:
       image: ghcr.io/srl-labs/network-multitool
 
